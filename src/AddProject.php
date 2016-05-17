@@ -3,31 +3,46 @@
 namespace GVinaccia\DevCtl;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 
 class AddProject extends Command
 {
     protected function configure()
     {
         $this->setName('project:add')
-             ->addOption('url', null, InputOption::VALUE_REQUIRED);
+             ->addOption('url', null, InputOption::VALUE_REQUIRED)
+             ->addOption('publicDir', null, InputOption::VALUE_REQUIRED, '', 'public');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $url = $input->getOption('url');
+        $publicDir = $input->getOption('publicDir');
 
         if ($url === null) {
             $output->writeln('è necessario specificare un url per il progetto');
+
             return 1;
         }
 
         $currentDir = getcwd();
+        $configFile = getenv('HOME').'/dev/conf/sites-enabled/'.basename($currentDir).'.conf';
 
+        $this->writeVHostConfig($currentDir, $publicDir, $url, $configFile);
+
+        $output->writeln("configurazione scritta in $configFile");
+    }
+
+    /**
+     * @param $currentDir
+     * @param $publicDir
+     * @param $url
+     * @param $configFile
+     */
+    protected function writeVHostConfig($currentDir, $publicDir, $url, $configFile)
+    {
         $config = <<<EOT
 server {
     listen 80;
@@ -50,13 +65,9 @@ server {
     }
 }
 EOT;
-        $config = str_replace('__ROOT__', $currentDir . '/public', $config);
+        $config = str_replace('__ROOT__', $currentDir.'/'.$publicDir, $config);
         $config = str_replace('__SERVER_NAME__', $url, $config);
 
-        $configFile = getenv('HOME')  . '/dev/conf/sites-enabled/' . basename($currentDir) . '.conf';
-
         file_put_contents($configFile, $config);
-
-        $output->writeln("configurazione scritta in $configFile");
     }
 }
