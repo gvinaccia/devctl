@@ -1,0 +1,20 @@
+{
+    "name": "gvinaccia/devctl",
+    "description": "utilità per lo sviluppo in locale con php ed nginx",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Giovanni Vinaccia",
+            "email": "vinaccia.giovanni@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "GVinaccia\\DevCtl\\": "src/"
+        }
+    },
+    "require": {
+        "symfony/console": "^3.0",
+        "symfony/process": "^3.0"
+    }
+}
