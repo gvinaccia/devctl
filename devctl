@@ -3,6 +3,7 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
+use GVinaccia\DevCtl\ListProjects;
 use Symfony\Component\Console\Application;
 use GVinaccia\DevCtl\InitCommand;
 use GVinaccia\DevCtl\AddProject;
@@ -10,4 +11,5 @@ use GVinaccia\DevCtl\AddProject;
 $application = new Application();
 $application->add(new InitCommand);
 $application->add(new AddProject);
+$application->add(new ListProjects);
 $application->run();
